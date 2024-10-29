@@ -343,6 +343,10 @@ class BaseLLMClient:
             return GroqClient
         elif provider == LLMProvider.AZURE:
             return AzureClient
+        elif provider == LLMProvider.GOOGLE:
+
+            from core.llm.google_client import GoogleClient
+            return GoogleClient
         else:
             raise ValueError(f"Unsupported LLM provider: {provider.value}")
 
