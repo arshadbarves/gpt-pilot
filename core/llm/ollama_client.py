@@ -1,4 +1,5 @@
 import datetime
+import json
 from typing import Optional
 
 import httpx
@@ -27,10 +28,10 @@ class OllamaClient(BaseLLMClient):
         )
 
     async def _make_request(
-        self,
-        convo: Convo,
-        temperature: Optional[float] = None,
-        json_mode: bool = False,
+            self,
+            convo: Convo,
+            temperature: Optional[float] = None,
+            json_mode: bool = False,
     ) -> tuple[str, int, int]:
         completion_kwargs = {
             "model": self.config.model,
@@ -47,9 +48,14 @@ class OllamaClient(BaseLLMClient):
 
         async with self.client.stream("POST", "/api/chat", json=completion_kwargs) as stream:
             async for chunk in stream.aiter_text():
-                response.append(chunk)
-                if self.stream_handler:
-                    await self.stream_handler(chunk)
+                try:
+                    chunk_data = json.loads(chunk)
+                    if "message" in chunk_data and "content" in chunk_data["message"]:
+                        response.append(chunk_data["message"]["content"])
+                    if self.stream_handler:
+                        await self.stream_handler(chunk_data["message"]["content"])
+                except json.JSONDecodeError:
+                    log.error("Failed to decode JSON chunk", exc_info=True)
 
         response_str = "".join(response)
 
