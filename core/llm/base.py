@@ -347,6 +347,9 @@ class BaseLLMClient:
 
             from core.llm.google_client import GoogleClient
             return GoogleClient
+        elif provider == LLMProvider.OLLAMA:
+            from core.llm.ollama_client import OllamaClient
+            return OllamaClient
         else:
             raise ValueError(f"Unsupported LLM provider: {provider.value}")
 

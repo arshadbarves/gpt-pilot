@@ -71,6 +71,7 @@ class LLMProvider(str, Enum):
     LM_STUDIO = "lm-studio"
     AZURE = "azure"
     GOOGLE = "google"
+    OLLAMA = "ollama"
 
 
 class UIAdapter(str, Enum):
@@ -319,6 +320,7 @@ class Config(_StrictModel):
         default={
             LLMProvider.OPENAI: ProviderConfig(),
             LLMProvider.ANTHROPIC: ProviderConfig(),
+            LLMProvider.OLLAMA: ProviderConfig(),
         }
     )
     agent: dict[str, AgentLLMConfig] = Field(
