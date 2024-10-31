@@ -186,7 +186,7 @@ class BaseAgent:
 
         return client
 
-    async def run() -> AgentResponse:
+    async def run(self) -> AgentResponse:
         """
         Run the agent.
 
