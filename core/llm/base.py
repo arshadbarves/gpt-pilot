@@ -287,6 +287,7 @@ class BaseLLMClient:
             request_log.prompt_tokens += prompt_tokens
             request_log.completion_tokens += completion_tokens
             if parser:
+                request_log.response = parser(response)
                 try:
                     response = parser(response)
                     break
@@ -298,6 +299,7 @@ class BaseLLMClient:
                     convo.user(f"Error parsing response: {err}. Please output your response EXACTLY as requested.")
                     continue
             else:
+                print(response)
                 break
 
         t1 = time()
@@ -334,6 +336,8 @@ class BaseLLMClient:
         from .azure_client import AzureClient
         from .groq_client import GroqClient
         from .openai_client import OpenAIClient
+        from .google_client import GoogleClient
+        from .github_copilot_client import GitHubCopilotClient
 
         if provider == LLMProvider.OPENAI:
             return OpenAIClient
@@ -344,9 +348,9 @@ class BaseLLMClient:
         elif provider == LLMProvider.AZURE:
             return AzureClient
         elif provider == LLMProvider.GOOGLE:
-
-            from core.llm.google_client import GoogleClient
             return GoogleClient
+        elif provider == LLMProvider.GITHUB_COPILOT:
+            return GitHubCopilotClient
         else:
             raise ValueError(f"Unsupported LLM provider: {provider.value}")
 
